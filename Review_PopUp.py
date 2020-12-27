@@ -2,6 +2,7 @@
 #// Copyright (c) 2020 Mohamad Janati (freaking stupid, right? :|)
 
 
+import time
 from anki.hooks import wrap
 from anki.sound import play, clearAudioQueue, AVPlayer
 from aqt.reviewer import Reviewer
@@ -11,6 +12,8 @@ from aqt.qt import *
 import os
 from os.path import join, dirname
 import random
+
+
 addon_path = dirname(__file__)
 config = mw.addonManager.getConfig(__name__)
 
@@ -60,18 +63,26 @@ def show_popUp(cnt, ease):
     headerText_fontStyle = config["Header Text Font Style"]
     show_header = config["Show Header"]
     show_image = config["Show Image"]
+
+    # headers
     header_list_again = config["Header Texts_ Again"]
     header_list_hard = config["Header Texts_ Hard"]
     header_list_good = config["Header Texts_ Good"]
     header_list_easy = config["Header Texts_ Easy"]
+
+    # titles
     title_list_again = config["Window Titles_ Again"]
     title_list_hard = config["Window Titles_ Hard"]
     title_list_good = config["Window Titles_ Good"]
     title_list_easy = config["Window Titles_ Easy"]
+
+    # buttons
     button_list_again = config["Button Texts_ Again"]
     button_list_hard = config["Button Texts_ Hard"]
     button_list_good = config["Button Texts_ Good"]
     button_list_easy = config["Button Texts_ Easy"]
+
+
     if cnt == 3:
         if ease == 1:
             folder = 'again'
@@ -119,21 +130,34 @@ def show_popUp(cnt, ease):
             header_text = "cnt: {} | ease: {}".format(cnt, ease)
             title_text = "Wrong Ease."
             button_text = "Ok"
+
+    # define image folder
     image_folder = join(addon_path, 'user_files/images', folder)
     imageName_list = os.listdir(image_folder)
     image_name = '/{}'.format(random.choice(imageName_list))
 
+    # remove qt frame & background
     window = QDialog(mw)
+    window.setWindowFlag(Qt.FramelessWindowHint)
+    window.setAttribute(Qt.WA_TranslucentBackground, True)
     window.setWindowTitle(title_text)
     window.setWindowIcon(QIcon(join(addon_path, 'user_files/images') + "/icon.png"))
+
+    # title bar
     header = QLabel()
     header.setAlignment(Qt.AlignCenter)
     header.setText("<div style='font-size: {}px; font-family: {};'> {} </div>".format(headerText_fontSize, headerText_fontStyle, header_text))
+
+    # visualization
     image = QLabel()
     image.setAlignment(Qt.AlignCenter)
     image.setText("<img src='{}' style='max-height: 450px; max-width: 450px;'>".format(image_folder + image_name))
-    button = QPushButton(button_text)
-    button.clicked.connect(lambda: window.hide())
+
+    # close out
+    #button = QPushButton(button_text)
+    #button.clicked.connect(lambda: window.hide())
+
+    # layout
     layout = QVBoxLayout()
     if show_header:
         layout.addWidget(header)
@@ -143,8 +167,10 @@ def show_popUp(cnt, ease):
     show_onHard = config["Show on Hard"]
     show_onGood = config["Show on Good"]
     show_onEasy = config["Show on Easy"]
-    layout.addWidget(button)
+    #layout.addWidget(button)
     window.setLayout(layout)
+
+
     if not show_image and not show_header:
         return
     elif ease == 1 and show_onAgain:
@@ -157,6 +183,5 @@ def show_popUp(cnt, ease):
         window.exec()
     else:
         return
-
 
 Reviewer._answerCard = wrap(Reviewer._answerCard, myPopUp, 'before')
