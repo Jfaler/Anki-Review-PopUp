@@ -138,7 +138,7 @@ def show_popUp(cnt, ease):
 
     # remove qt frame & background
     window = QDialog(mw)
-    window.setWindowFlag(Qt.FramelessWindowHint)
+    window.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup | Qt.NoDropShadowWindowHint)
     window.setAttribute(Qt.WA_TranslucentBackground, True)
     window.setWindowTitle(title_text)
     window.setWindowIcon(QIcon(join(addon_path, 'user_files/images') + "/icon.png"))
